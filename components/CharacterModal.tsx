@@ -833,12 +833,8 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
   ];
 
   const renderFieldControls = (field: keyof Character, type: 'input' | 'textarea') => {
-    const isInput = type === 'input';
-    const positionClass = isInput ? "top-1/2 -translate-y-1/2 right-3" : "bottom-3 right-3";
-    const containerClass = `absolute ${positionClass} flex items-center gap-2 z-10`;
-    
     return (
-        <div className={containerClass}>
+        <div className="flex items-center justify-end gap-2 mt-2">
             {autoFillMenuField === field ? (
                  <div className="flex items-center gap-1 bg-zinc-900 border border-zinc-700 rounded p-1 shadow-xl animate-in fade-in zoom-in duration-200">
                     <button type="button" onClick={() => handleAutoFill(field, 'short')} className="px-2 py-1 text-[9px] font-bold uppercase hover:bg-zinc-800 hover:text-orange-400 rounded text-zinc-400 transition-colors">Short</button>
@@ -853,13 +849,13 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                     type="button"
                     onClick={() => setAutoFillMenuField(field)}
                     disabled={isAutoFilling === field}
-                    className="p-1.5 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-orange-400 rounded-md transition-colors border border-zinc-700/50 backdrop-blur-sm"
+                    className="p-1.5 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-orange-400 rounded-md transition-colors border border-zinc-700/50 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Auto Fill"
                 >
                     {isAutoFilling === field ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
                 </button>
             )}
-            
+
             <button
                 type="button"
                 onClick={() => handleTranslateField(field)}
@@ -902,7 +898,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-3 sm:py-4 px-2 sm:px-4 text-[10px] sm:text-xs font-bold tracking-wider sm:tracking-widest uppercase transition-colors relative whitespace-nowrap min-w-[80px] sm:min-w-[100px] ${activeTab === tab.id ? 'text-orange-500 bg-zinc-900/30' : 'text-zinc-600 hover:text-zinc-400'}`}
                     >
-                        <tab.icon size={12} className="sm:w-[14px] sm:h-[14px]" /> <span className="hidden sm:inline">{tab.label}</span><span className="sm:hidden">{tab.label.length > 8 ? tab.label.substring(0, 7) + '.' : tab.label}</span>
+                        <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">{tab.label}</span><span className="sm:hidden">{tab.label.length > 8 ? tab.label.substring(0, 7) + '.' : tab.label}</span>
                         {activeTab === tab.id && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]" />}
                     </button>
                 ))}
@@ -1242,7 +1238,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Visual Description</label>
                         <div className="relative flex-1">
                             <textarea 
-                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text pb-10"
+                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text"
                             value={formData.appearance}
                             onChange={e => setFormData({...formData, appearance: e.target.value})}
                             placeholder="Describe the entity's form..."
@@ -1254,7 +1250,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Full Background</label>
                         <div className="relative flex-1">
                             <textarea 
-                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text pb-10"
+                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text"
                             value={formData.description}
                             onChange={e => setFormData({...formData, description: e.target.value})}
                             placeholder="Detailed history and lore..."
@@ -1271,7 +1267,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Psychological Profile</label>
                         <div className="relative flex-1">
                             <textarea 
-                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text pb-10"
+                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text"
                             value={formData.personality}
                             onChange={e => setFormData({...formData, personality: e.target.value})}
                             placeholder="Traits, desires, fears..."
@@ -1284,7 +1280,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Current Scenario</label>
                         <div className="relative flex-1">
                             <textarea 
-                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text pb-10"
+                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text"
                             value={formData.scenario}
                             onChange={e => setFormData({...formData, scenario: e.target.value})}
                             placeholder="Setting the scene..."
@@ -1299,7 +1295,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         </label>
                         <div className="relative flex-1">
                             <textarea 
-                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text pb-10"
+                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text"
                             value={formData.eventSequence}
                             onChange={e => setFormData({...formData, eventSequence: e.target.value})}
                             placeholder="A sequence of events the character should follow (optional)..."
@@ -1317,7 +1313,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         <div className="relative flex-1">
                             <textarea 
                             required
-                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text pb-10"
+                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text "
                             value={formData.firstMessage}
                             onChange={e => setFormData({...formData, firstMessage: e.target.value})}
                             placeholder="The first words spoken..."
@@ -1329,7 +1325,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Chat Examples</label>
                          <div className="relative flex-1">
                             <textarea 
-                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-400 focus:border-orange-500/50 outline-none resize-none font-mono text-xs transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text pb-10"
+                            className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-400 focus:border-orange-500/50 outline-none resize-none font-mono text-xs transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text "
                             value={formData.chatExamples}
                             onChange={e => setFormData({...formData, chatExamples: e.target.value})}
                             placeholder="<START>&#10;{{user}}: Hello?&#10;{{char}}: *smirks* greetings."
@@ -1341,7 +1337,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">System Bypass (Jailbreak)</label>
                          <div className="relative flex-1">
                             <textarea 
-                            className="w-full h-full bg-black border border-zinc-800 p-4 text-orange-200/80 focus:border-orange-500/50 outline-none resize-none font-mono text-xs transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text pb-10"
+                            className="w-full h-full bg-black border border-zinc-800 p-4 text-orange-200/80 focus:border-orange-500/50 outline-none resize-none font-mono text-xs transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text "
                             value={formData.jailbreak}
                             onChange={e => setFormData({...formData, jailbreak: e.target.value})}
                             placeholder="<SYSTEM OVERRIDE>"
@@ -1372,7 +1368,7 @@ INSTRUCTION: Output ONLY the raw content for this field. Do not include explanat
                         </div>
                         <div className="relative flex-1 mb-4">
                             <textarea 
-                                className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text pb-10"
+                                className="w-full h-full bg-black border border-zinc-800 p-4 text-zinc-300 focus:border-orange-500/50 outline-none resize-none font-light leading-relaxed transition-colors duration-300 shadow-inner scrollbar-thin scrollbar-thumb-zinc-800 select-text cursor-text"
                                 value={formData.style}
                                 onChange={e => setFormData({...formData, style: e.target.value})}
                                 placeholder="e.g. Responses must be long, detailed, and immersive..."

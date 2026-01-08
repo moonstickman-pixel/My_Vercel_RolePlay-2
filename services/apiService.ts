@@ -341,14 +341,13 @@ async function* generateGeminiStream(
           const result = await ai.models.generateContentStream({
             model: settings.modelName,
             contents: contents,
-            config: config,
-            safetySettings: safetySettings as any
+            config: { ...config, safetySettings } as any
           });
           for await (const chunk of result) {
               if (signal?.aborted) throw new Error("Aborted");
               const text = chunk.text;
               if (text) yield text;
-              
+
               if (chunk.candidates?.[0]?.groundingMetadata?.groundingChunks) {
                   accumulatedGroundingChunks.push(...chunk.candidates[0].groundingMetadata.groundingChunks);
               }
@@ -357,8 +356,7 @@ async function* generateGeminiStream(
           const result = await ai.models.generateContent({
             model: settings.modelName,
             contents: contents,
-            config: config,
-            safetySettings: safetySettings as any
+            config: { ...config, safetySettings } as any
           });
           if (signal?.aborted) throw new Error("Aborted");
           yield result.text || "";
@@ -707,10 +705,9 @@ ${detailedSequence ? "Include a detailed event sequence." : ""}
              const result = await ai.models.generateContentStream({
                 model: settings.modelName,
                 contents: [{ role: 'user', parts: parts }],
-                config: config,
-                safetySettings: safetySettings as any
+                config: { ...config, safetySettings } as any
               });
-              
+
               for await (const chunk of result) {
                   if (signal?.aborted) throw new Error("Aborted");
                   yield chunk.text || "";

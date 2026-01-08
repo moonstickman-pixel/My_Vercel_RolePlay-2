@@ -48,7 +48,8 @@ const ToastContainer = ({ toasts }: { toasts: Toast[] }) => {
 };
 
 const renderFormattedContent = (content: string, settings: AppSettings, onImageClick?: (src: string) => void) => {
-    const parts = content.split(/(\*[^*]+\*|"[^"]+")/g);
+    // Enhanced regex to support multiple quote types: "", "", «», ‹›, and standard quotes
+    const parts = content.split(/(\*[^*]+\*|"[^"]+"|"[^"]+"|«[^»]+»|‹[^›]+›|'[^']+'|'[^']+')/g);
 
     return parts.map((part, index) => {
         if (part.startsWith('*') && part.endsWith('*')) {
@@ -57,7 +58,14 @@ const renderFormattedContent = (content: string, settings: AppSettings, onImageC
                     {part}
                 </span>
             );
-        } else if (part.startsWith('"') && part.endsWith('"')) {
+        } else if (
+            (part.startsWith('"') && part.endsWith('"')) ||
+            (part.startsWith('"') && part.endsWith('"')) ||
+            (part.startsWith('«') && part.endsWith('»')) ||
+            (part.startsWith('‹') && part.endsWith('›')) ||
+            (part.startsWith("'") && part.endsWith("'")) ||
+            (part.startsWith("'") && part.endsWith("'"))
+        ) {
             return (
                 <span key={index} style={{ color: settings.dialogueColor }}>
                     {part}
@@ -1682,80 +1690,80 @@ function App() {
         )}
 
         <div className="flex-1 flex flex-col relative z-10 h-full">
-            <div className="flex items-center justify-between p-6 border-b border-zinc-900/50 bg-[#030303]/60 backdrop-blur z-10 transition-all duration-500">
-             <div className="w-full max-w-6xl mx-auto flex items-center justify-between gap-4">
-                <div className="flex items-center gap-6 flex-1 min-w-0 group/header">
+            <div className="flex items-center justify-between p-3 md:p-6 border-b border-zinc-900/50 bg-[#030303]/60 backdrop-blur z-10 transition-all duration-500">
+             <div className="w-full max-w-6xl mx-auto flex items-center justify-between gap-2 md:gap-4">
+                <div className="flex items-center gap-2 md:gap-6 flex-1 min-w-0 group/header">
                     <button onClick={() => setIsSidebarOpen(true)} className="md:hidden text-zinc-400 hover:text-white transition-colors shrink-0">
-                        <Menu size={24} />
+                        <Menu size={20} />
                     </button>
                     {activeChar && activeSession && (
-                    <div className="flex items-center gap-4 animate-slide-up-fade min-w-0 flex-1">
+                    <div className="flex items-center gap-2 md:gap-4 animate-slide-up-fade min-w-0 flex-1">
                         <div className="relative group cursor-pointer shrink-0">
                             <div className="absolute inset-0 bg-orange-500/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                            <img 
-                                src={activeChar.avatarUrl} 
-                                className="relative w-12 h-12 rounded-full object-cover ring-1 ring-zinc-800 group-hover:ring-orange-500/50 transition-all duration-500 shadow-lg cursor-zoom-in" 
+                            <img
+                                src={activeChar.avatarUrl}
+                                className="relative w-10 h-10 md:w-12 md:h-12 rounded-full object-cover ring-1 ring-zinc-800 group-hover:ring-orange-500/50 transition-all duration-500 shadow-lg cursor-zoom-in"
                                 onClick={(e) => { e.stopPropagation(); setViewedImage(activeChar.avatarUrl); }}
                             />
-                            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-black shadow-[0_0_8px_rgba(16,185,129,0.5)] pointer-events-none"></div>
+                            <div className="absolute bottom-0 right-0 w-2 h-2 md:w-2.5 md:h-2.5 bg-emerald-500 rounded-full border-2 border-black shadow-[0_0_8px_rgba(16,185,129,0.5)] pointer-events-none"></div>
                         </div>
                         <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                                <h2 className="text-xl font-serif font-bold text-white tracking-wide leading-none truncate cursor-pointer" onClick={() => { setEditingChar(activeChar); setIsCharModalOpen(true); }}>
+                            <div className="flex items-center gap-1 md:gap-2 mb-0.5 md:mb-1">
+                                <h2 className="text-base md:text-xl font-serif font-bold text-white tracking-wide leading-none truncate cursor-pointer" onClick={() => { setEditingChar(activeChar); setIsCharModalOpen(true); }}>
                                     {activeChar.name.toUpperCase()}
                                 </h2>
-                                <button 
+                                <button
                                     onClick={(e) => { e.stopPropagation(); setEditingChar(activeChar); setIsCharModalOpen(true); }}
-                                    className="shrink-0 text-zinc-700 hover:text-orange-500 transition-colors p-1"
+                                    className="shrink-0 text-zinc-700 hover:text-orange-500 transition-colors p-0.5 md:p-1"
                                 >
-                                    <Edit2 size={14} />
+                                    <Edit2 size={12} className="md:w-[14px] md:h-[14px]" />
                                 </button>
                             </div>
-                            <p className="text-[10px] text-orange-500/80 uppercase tracking-widest font-medium">
+                            <p className="text-[9px] md:text-[10px] text-orange-500/80 uppercase tracking-widest font-medium truncate">
                                 {activeSession ? `// ${activeSession.name}` : '// STANDBY'}
                             </p>
                         </div>
                     </div>
                     )}
                 </div>
-                
-                <div className="flex items-center gap-1 bg-zinc-900/30 p-1 rounded-lg border border-zinc-800/50 backdrop-blur-md shrink-0">
+
+                <div className="flex items-center gap-0.5 md:gap-1 bg-zinc-900/30 p-0.5 md:p-1 rounded-lg border border-zinc-800/50 backdrop-blur-md shrink-0">
                     {activeChar && activeSession && (
                         manageMode === 'messages' ? (
-                            <button 
-                                onClick={() => handleSetManageMode(null)} 
-                                className="p-2 text-orange-500 bg-orange-500/10 rounded-md hover:bg-orange-500/20 transition-all duration-300"
+                            <button
+                                onClick={() => handleSetManageMode(null)}
+                                className="p-1.5 md:p-2 text-orange-500 bg-orange-500/10 rounded-md hover:bg-orange-500/20 transition-all duration-300"
                                 title="Exit Selection"
                             >
-                                <X size={18} />
+                                <X size={16} className="md:w-[18px] md:h-[18px]" />
                             </button>
                         ) : (
-                            <button 
+                            <button
                                 onClick={() => handleSetManageMode('messages')}
-                                className="p-2 text-zinc-400 hover:text-orange-400 hover:bg-white/5 rounded-md transition-all duration-300"
+                                className="p-1.5 md:p-2 text-zinc-400 hover:text-orange-400 hover:bg-white/5 rounded-md transition-all duration-300"
                                 title="Manage Messages"
                             >
-                                <ListChecks size={18} />
+                                <ListChecks size={16} className="md:w-[18px] md:h-[18px]" />
                             </button>
                         )
                     )}
 
-                    {activeChar && activeSession && <div className="w-px h-4 bg-zinc-700/50 mx-1"></div>}
+                    {activeChar && activeSession && <div className="w-px h-3 md:h-4 bg-zinc-700/50 mx-0.5 md:mx-1"></div>}
 
-                    <button 
+                    <button
                         onClick={() => { setSettingsTab('general'); setIsSettingsOpen(true); }}
-                        className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-md transition-all duration-300 group"
+                        className="p-1.5 md:p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-md transition-all duration-300 group"
                         title="Configuration"
                     >
-                        <Settings size={18} className="group-hover:rotate-90 transition-transform duration-500" />
+                        <Settings size={16} className="md:w-[18px] md:h-[18px] group-hover:rotate-90 transition-transform duration-500" />
                     </button>
                 </div>
               </div>
             </div>
 
-            <div 
+            <div
                 ref={chatContainerRef}
-                className="flex-1 overflow-y-auto px-4 py-8 space-y-8 scroll-auto scrollbar-thin scrollbar-thumb-zinc-800 w-full max-w-6xl mx-auto"
+                className="flex-1 overflow-y-auto px-4 py-8 space-y-8 scroll-auto scrollbar-thin scrollbar-thumb-zinc-800 w-full max-w-6xl mx-auto relative"
             >
             {!activeSession ? (
                 <div 
@@ -1990,6 +1998,27 @@ function App() {
                     <div ref={bottomRef} />
                 </>
             )}
+
+            {/* Floating Action Buttons - Only shown when there's an active session */}
+            {activeSession && !manageMode && (
+                <div className="fixed bottom-20 md:bottom-24 right-4 md:right-8 z-30 flex flex-col gap-3">
+                    <button
+                        onClick={() => { setEditingChar(activeChar); setIsCharModalOpen(true); }}
+                        className="p-3 md:p-4 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700 rounded-full shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-110 group"
+                        title="Character Settings"
+                    >
+                        <Edit2 size={18} className="text-zinc-400 group-hover:text-orange-400 transition-colors md:w-5 md:h-5" />
+                    </button>
+
+                    <button
+                        onClick={() => { setSettingsTab('general'); setIsSettingsOpen(true); }}
+                        className="p-3 md:p-4 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700 rounded-full shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-110 group"
+                        title="App Settings"
+                    >
+                        <Settings size={18} className="text-zinc-400 group-hover:text-orange-400 transition-colors group-hover:rotate-90 duration-500 md:w-5 md:h-5" />
+                    </button>
+                </div>
+            )}
             </div>
 
             {/* Translation and Input area code ... (omitted for brevity, assume unchanged logic) */}
@@ -2177,44 +2206,46 @@ function App() {
       {/* Character Selection Modal - Restored */}
       {selectedCharForMenu && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in">
-             <div className="relative bg-[#050505] border border-zinc-800 w-full max-w-md p-8 shadow-[0_0_100px_rgba(234,88,12,0.15)] animate-modal-enter">
-                <button onClick={() => setChatSelection(null)} className="absolute top-4 right-4 text-zinc-600 hover:text-white transition-colors">
+             <div className="relative bg-[#050505] border border-zinc-800 w-full max-w-md max-h-[90vh] flex flex-col shadow-[0_0_100px_rgba(234,88,12,0.15)] animate-modal-enter">
+                <button onClick={() => setChatSelection(null)} className="absolute top-4 right-4 text-zinc-600 hover:text-white transition-colors z-10">
                     <X size={20} />
                 </button>
 
-                <div className="flex justify-center mb-8 relative">
-                    <div className="absolute inset-0 bg-orange-500/20 blur-xl rounded-full animate-pulse-slow"></div>
-                    <div 
-                        className="w-32 h-32 rounded-full p-1 bg-gradient-to-b from-zinc-700 to-black relative z-10 shadow-2xl cursor-zoom-in"
-                        onClick={(e) => { e.stopPropagation(); setViewedImage(selectedCharForMenu.avatarUrl); }}
-                    >
-                         <img 
-                            src={selectedCharForMenu.avatarUrl} 
-                            className="w-full h-full rounded-full object-cover border-4 border-[#050505]" 
-                         />
-                    </div>
-                </div>
-                <div className="text-center mb-8">
-                    <h3 className="text-xs font-serif text-orange-500 tracking-[0.3em] mb-2 uppercase drop-shadow-[0_0_8px_rgba(234,88,12,0.5)]">Manifestation // Character</h3>
-                    <h2 className="text-3xl font-serif font-bold text-white mb-2">{selectedCharForMenu.name}</h2>
-                    <p className="text-xs text-zinc-500 font-light leading-relaxed max-w-[80%] mx-auto">
-                        {selectedCharForMenu.tagline || selectedCharForMenu.description.slice(0, 80) + "..."}
-                    </p>
-                </div>
-                
-                <div className="space-y-3">
-                    <Button fullWidth variant="primary" onClick={handleStartNewChat} className="flex items-center justify-center gap-2 py-4 shadow-[0_0_20px_rgba(234,88,12,0.2)] hover:shadow-[0_0_30px_rgba(234,88,12,0.4)] transition-shadow duration-500">
-                        <MessageSquarePlus size={16} /> Start New Communion
-                    </Button>
+                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 p-8">
+                  <div className="flex justify-center mb-8 relative">
+                      <div className="absolute inset-0 bg-orange-500/20 blur-xl rounded-full animate-pulse-slow"></div>
+                      <div
+                          className="w-32 h-32 rounded-full p-1 bg-gradient-to-b from-zinc-700 to-black relative z-10 shadow-2xl cursor-zoom-in"
+                          onClick={(e) => { e.stopPropagation(); setViewedImage(selectedCharForMenu.avatarUrl); }}
+                      >
+                           <img
+                              src={selectedCharForMenu.avatarUrl}
+                              className="w-full h-full rounded-full object-cover border-4 border-[#050505]"
+                           />
+                      </div>
+                  </div>
+                  <div className="text-center mb-8">
+                      <h3 className="text-xs font-serif text-orange-500 tracking-[0.3em] mb-2 uppercase drop-shadow-[0_0_8px_rgba(234,88,12,0.5)]">Manifestation // Character</h3>
+                      <h2 className="text-2xl md:text-3xl font-serif font-bold text-white mb-2">{selectedCharForMenu.name}</h2>
+                      <p className="text-xs text-zinc-500 font-light leading-relaxed max-w-[90%] mx-auto line-clamp-3">
+                          {selectedCharForMenu.tagline || selectedCharForMenu.description}
+                      </p>
+                  </div>
 
-                    <Button fullWidth variant="outline" onClick={handleContinueChat} className="flex items-center justify-center gap-2 py-4">
-                        <History size={16} /> Resume Manifestation
-                    </Button>
+                  <div className="space-y-3">
+                      <Button fullWidth variant="primary" onClick={handleStartNewChat} className="flex items-center justify-center gap-2 py-4 shadow-[0_0_20px_rgba(234,88,12,0.2)] hover:shadow-[0_0_30px_rgba(234,88,12,0.4)] transition-shadow duration-500">
+                          <MessageSquarePlus size={16} /> Start New Communion
+                      </Button>
 
-                     <Button fullWidth variant="ghost" onClick={() => chatFileInputRef.current?.click()} className="flex items-center justify-center gap-2 py-4 text-zinc-600 hover:text-orange-400">
-                        <FolderInput size={16} /> Import Record
-                    </Button>
-                    <input type="file" ref={chatFileInputRef} onChange={handleImportChat} className="hidden" accept=".json" />
+                      <Button fullWidth variant="outline" onClick={handleContinueChat} className="flex items-center justify-center gap-2 py-4">
+                          <History size={16} /> Resume Manifestation
+                      </Button>
+
+                       <Button fullWidth variant="ghost" onClick={() => chatFileInputRef.current?.click()} className="flex items-center justify-center gap-2 py-4 text-zinc-600 hover:text-orange-400">
+                          <FolderInput size={16} /> Import Record
+                      </Button>
+                      <input type="file" ref={chatFileInputRef} onChange={handleImportChat} className="hidden" accept=".json" />
+                  </div>
                 </div>
              </div>
         </div>
